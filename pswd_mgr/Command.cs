@@ -193,6 +193,12 @@ namespace pswd_mgr
             Console.WriteLine(IndentString(message, StatusMessageIndent(decoration), decoration.Length));
             Console.ResetColor();
         }
+
+        public static void WriteInformation(string message)
+        {
+            var decoration = "ℹ️ ";
+            Console.WriteLine(IndentString(message, StatusMessageIndent(decoration), decoration.Length));
+        }
     }
 
     /// <summary>
@@ -255,8 +261,8 @@ namespace pswd_mgr
         /// <summary>
         /// Ber använderen interaktivt om ett input direkt i konsolen. Om <paramref name="secret"/> är true så kommer enbart den sista bokstaven i användarens input visas av säkerhetsskäl (tex vid input av lösenord)
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="secret"></param>
+        /// <param name="name">den information vi vill ha från användaren</param>
+        /// <param name="secret">om vi vill skydda användarens input genom att bara visa den sista bokstaven i dennes input</param>
         /// <returns></returns>
         public string GetInteractive(string name, bool secret)
         {
