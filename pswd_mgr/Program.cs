@@ -1,8 +1,12 @@
 ﻿using pswd_mgr;
 using pswd_mgr.Commands;
 
+Console.Title = "Password Manager";
+Console.OutputEncoding = System.Text.Encoding.UTF8;
 
 bool running = true;
+
+TextHelper.LinedMessage("Lorem ipsum odor amet, consectetuer adipiscing elit. Nec torquent facilisi ex egestas risus nullam; ridiculus senectus sollicitudin. Justo donec vehicula elit nec posuere nascetur integer purus. Molestie a phasellus commodo congue tristique quam; nam litora rutrum. Luctus in enim tempus nisl ullamcorper malesuada tincidunt. Pulvinar sapien diam elementum auctor torquent augue. Cubilia massa eleifend condimentum aenean leo neque congue dapibus. Donec quam rutrum vivamus vitae molestie sagittis erat montes.\r\n\r\nConubia lobortis proin nisl aliquet ad sociosqu praesent platea. Habitant commodo eleifend ridiculus ut laoreet vivamus quis. Sagittis diam at mus class dui risus. Sed ex leo sapien sociosqu amet nec consequat. Egestas aptent montes odio fringilla suspendisse. Suspendisse finibus odio posuere phasellus odio. Nunc mi mi nulla platea metus; habitasse posuere.\r\n\r\nMattis etiam id sapien turpis cubilia. Varius mollis convallis vehicula vehicula, adipiscing ultricies tortor. Varius pharetra fringilla fringilla semper senectus habitant ullamcorper ornare orci. Ullamcorper sollicitudin tellus; aliquam netus eros mauris curabitur eleifend. Est cursus sit lacus vitae aliquam himenaeos class et. Metus mus egestas nisi, leo leo non molestie id. Class etiam ad habitant tincidunt congue. Avulputate malesuada pulvinar ipsum sagittis.\r\n\r\nVelit tristique faucibus consectetur lacinia cubilia neque nunc. Fermentum nec lectus at posuere laoreet in. Amet habitasse malesuada ullamcorper bibendum primis inceptos. Habitant phasellus nam himenaeos tortor per amet pretium. Pulvinar risus est ligula habitasse quam nec commodo convallis enim. Tortor maximus sit est luctus sem eros justo odio. Maximus posuere sem bibendum eros nunc cursus auctor lobortis. Velit sollicitudin in in porta magna tempus.\r\n\r\nPraesent libero eget quis pretium magna a rhoncus sapien. Sollicitudin netus placerat luctus libero per torquent odio. Eu nibh feugiat nam nullam habitant mattis diam pulvinar. Imperdiet ornare dolor habitasse quisque imperdiet fusce nunc. Taciti nascetur facilisis luctus mauris, quam mauris. Velit venenatis conubia pulvinar nostra, augue senectus. Tortor tortor velit orci posuere amet; libero sociosqu aliquet.");
 
 var commands = new Dictionary<string, I_Command>();
 commands.Add("init", new Init());
@@ -41,7 +45,7 @@ while(running)
 
         if(args_instance.PerhapsGet(0) == "--help")
         {
-            Console.WriteLine(command.GetCommandUsage());
+            TextHelper.PrettyPrint(command.GetCommandUsage());
             continue;
         }
 

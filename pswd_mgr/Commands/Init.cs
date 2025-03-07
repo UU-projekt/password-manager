@@ -11,7 +11,27 @@ namespace pswd_mgr.Commands
     {
         public string GetCommandUsage()
         {
-            return "SYNOPSIS\r\ninit < client > < server > { < pwd >}\r\nDESCRIPTION\r\nCreate new client at < client > , server at < server > , and encrypt your\r\nvault stored in < server > using <pwd >.\r\nYour generated secret key will be stored in < client > while the\r\ngenerated initialization vector will be stored in the < server >.\r\nTo access the vault stored in < server > you must use the < client > or\r\nuse the command ’ create ’ to create another client .\r\nWhen using < client > you can get , set , and delete data in / from your\r\nvault without having to manually provide your secret key on every\r\ninteraction . You must however provide your master password .\r\nIf files exist at < client > or < server > they will be overridden\r\nwithout prompting .\r\nYour secret key will be printed in plain - text to standard out .\r\nRemember to write down BOTH your master password AND secret key and\r\nstore them safely . You might e . g . , want to print them and store them\r\nnext to your passport . If you lose your master password and / or your\r\nsecret key then your data will be unrecoverable .\r\nOPTIONS\r\n< client > Path to client file .\r\n< server > Path to server file .\r\n<pwd > Your master password .\r\nEXAMPLES\r\nInitializing a new client and server at \" client . json \" and\r\n\" server . json \":\r\n$ init client . json server . json";
+            string synopsis = "init <client> <server> {<pwd>}";
+            string description = "Create new client at <client>, server at <server>, and encrypt your vault stored in <server> using <pwd>.\n"
+            + "Your generated secret key will be stored in <client> while the generated initialization vector will be stored in the <server>.\n"
+            + "To access the vault stored in <server> you must use the <client> or use the command ’create’ to create another client.\n"
+            + "When using <client> you can get, set, and delete data in / from your vault without having to manually provide your secret key on every interaction.\n"
+            + "You must however provide your master password."
+            + "If files exist at <client> or <server> they will be overridden without prompting.\n\n"
+            + "Your secret key will be printed in plain - text to standard out. Remember to write down BOTH your master password AND secret key and tore them safely.\n\n"
+            + "You might e.g., want to print them and store them next to your passport.\n"
+            + "If you lose your master password and / or your secret key then your data will be unrecoverable.\n";
+
+
+            string options = "<client>     Path to client file.\n"
+            + "<server>     Path to server file.\n"
+            + "<pwd>        Your master password.\n";
+
+            string examples = "Initializing a new client and server at \"client.json\" and \"server.json\"\n"
+            + "  $ init client.json server.json";
+
+
+            return TextHelper.Format(synopsis, description, options, examples);
         }
 
         public int Run(CommandArguments args)
@@ -25,7 +45,7 @@ namespace pswd_mgr.Commands
 
             var vault_key = Crypto.GenerateVaultKey(secret, pwd);
 
-            ServerFile server_file = new ServerFile { initialization_vector = IV, vault = new() };
+            ServerFile server_file = new ServerFile { initialization_vector = IV, vault = [] };
             ClientFile client_file = new ClientFile { secret = secret };
 
 
