@@ -80,6 +80,11 @@ namespace pswd_mgr
         /// <returns></returns>
         private static string IndentString(string str, IEnumerable<string> indentation, int indentation_length)
         {
+            if(Program.IsRunningInTestEnvironment())
+            {
+                return str;
+            }
+
             if (indentation == null) indentation = DefaultIdentation("      ");
             int max_width = Console.WindowWidth - indentation_length;
             string[] lines = ContentAwareSplit(str, max_width);
@@ -102,6 +107,12 @@ namespace pswd_mgr
         /// <param name="str">texten vi vill snygga till</param>
         public static void PrettyPrint(string str)
         {
+            if(Program.IsRunningInTestEnvironment())
+            {
+                Console.WriteLine(str);
+                return;
+            }
+
             Console.Clear();
             ConsoleColor default_fg = Console.ForegroundColor;
             ConsoleColor default_bg = Console.BackgroundColor;
@@ -267,13 +278,22 @@ namespace pswd_mgr
         public string GetInteractive(string name, bool secret)
         {
             string? answer;
-            if(secret)
+            if(secret && !Program.IsRunningInTestEnvironment())
             {
                 answer = InternalGetInteractiveSecret(name);
             } else
             {
-                Console.Write($"{name}: ");
+                if (!Program.IsRunningInTestEnvironment()) {
+                    throw new Exception("TEST TEST");
+                    Console.Write($"{name}: ");
+                }
                 answer = Console.ReadLine();
+                Console.WriteLine();
+            }
+
+            if (answer != null && answer.StartsWith($"{name}: "))
+            {
+                answer = answer.Substring(name.Length + 2);
             }
 
             return String.IsNullOrWhiteSpace(answer) ? GetInteractive(name, secret) : answer;

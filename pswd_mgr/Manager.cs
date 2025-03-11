@@ -33,14 +33,18 @@ namespace pswd_mgr
             }
         }
 
+        public void FromEncrypted(byte[] encrypted_data)
+        {
+            FromEncrypted(encrypted_data, null);
+        }
         /// <summary>
         /// Läser in ett krypterat vault och lägger in det dekrypterat i denna klass
         /// </summary>
         /// <param name="encrypted_data">det krypterade valtet</param>
         /// <exception cref="Exception"></exception>
-        public void FromEncrypted(byte[] encrypted_data)
+        public void FromEncrypted(byte[] encrypted_data, byte[]? new_secret_key)
         {
-            byte[] decrypted_bytes = Crypto.Decrypt(encrypted_data, this.secret_key, this.initialization_vector);
+            byte[] decrypted_bytes = Crypto.Decrypt(encrypted_data, new_secret_key ?? this.secret_key, this.initialization_vector);
             var serialized_dictionary = JsonSerializer.Deserialize<Dictionary<string, string>>(decrypted_bytes);
 
             if(serialized_dictionary == null)
@@ -73,7 +77,39 @@ namespace pswd_mgr
 
         public void Add(string key, string value)
         {
+            if(this.dict.ContainsKey(key))
+            {
+                this.dict.Remove(key);
+            }
+
             this.dict.Add(key, value);
+        }
+
+        public void Remove(string key)
+        {
+            this.dict.Remove(key);
+        }
+
+        public string Get(string key)
+        {
+            return this.dict[key];
+        }
+
+        public string[] GetKeys()
+        {
+            return this.dict.Keys.ToArray();
+        }
+
+        public void SetSecretKey(byte[] secret_key)
+        {
+            this.secret_key = secret_key;
+        }
+
+        public static EncryptedDict From(ServerFile server, byte[] secret_key)
+        {
+            var instance = new EncryptedDict(secret_key, server.initialization_vector);
+            instance.FromEncrypted(server.vault);
+            return instance;
         }
     }
     public struct ServerFile {
@@ -111,6 +147,8 @@ namespace pswd_mgr
         /// <returns></returns>
         private static string NormalizedPath(string path)
         {
+            if (Program.IsRunningInTestEnvironment()) return path;
+
             // check för att se att filen har en filändelse och om filändelsen är .json
             // om användaren har gjort fel så fixar vi det åt denna och visar en liten varning
             if(!Path.HasExtension(path) || !Path.HasExtension(".json"))
@@ -180,9 +218,13 @@ namespace pswd_mgr
             return deserialized;
         }
 
-        public static void WriteServerFile(string path, ServerFile file)
+        public static void WriteServerFile(string path, byte[] iv, EncryptedDict vault)
         {
-            WriteFileGeneric(path, file);
+            ServerFile server_file;
+            server_file.initialization_vector = iv;
+            server_file.vault = vault.IntoEncrypted();
+
+            WriteFileGeneric(path, server_file);
         }
         public static void WriteClientFile(string path, ClientFile file)
         {

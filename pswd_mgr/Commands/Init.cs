@@ -44,12 +44,11 @@ namespace pswd_mgr.Commands
             byte[] IV = Crypto.CreateInitializationVector();
 
             var vault_key = Crypto.GenerateVaultKey(secret, pwd);
-
-            ServerFile server_file = new ServerFile { initialization_vector = IV, vault = [] };
+            var vault = new EncryptedDict(vault_key, IV);
             ClientFile client_file = new ClientFile { secret = secret };
 
 
-            Manager.WriteServerFile(server, server_file);
+            Manager.WriteServerFile(server, IV, vault);
             Manager.WriteClientFile(client, client_file);
 
             TextHelper.WriteInformation($"Nytt Vault skapat!\n\ndin secret_key är \"{Convert.ToBase64String(secret)}\"\n\nSe till att lagra denna secret på ett säkert ställe. Skriv gärna ner det på en papperslapp och spara det på ett ställe där du inte slarvar bort det. Vi rekomenderar till exempel att du lämnar denna lapp där du har ditt pass.");
